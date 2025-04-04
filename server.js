@@ -9,6 +9,8 @@ const apiRoutes         = require('./routes/api.js');
 const fccTestingRoutes  = require('./routes/fcctesting.js');
 const runner            = require('./test-runner');
 
+const mongoose = require("mongoose");
+
 const app = express();
 
 app.use('/public', express.static(process.cwd() + '/public'));
@@ -26,6 +28,12 @@ app.route('/')
 
 //For FCC testing purposes
 fccTestingRoutes(app);
+
+// Wait for database to connect, logging an error if there is a problem
+connectToMongoDB().catch((err) => console.log(err));
+async function connectToMongoDB() {
+  await mongoose.connect(process.env.MONGODB_URI);
+}
 
 //Routing for API 
 apiRoutes(app);  
